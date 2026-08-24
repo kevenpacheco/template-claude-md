@@ -74,7 +74,7 @@ So pergunte sobre merge se o alvo do PR for uma branch protegida do projeto (ex.
 Se o usuario aprovar:
 
 ```bash
-gh pr merge <numero-ou-url-do-pr> --squash --delete-branch
+gh pr merge <numero-ou-url-do-pr> --merge --delete-branch
 git checkout main
 git pull origin main
 ```
