@@ -1,6 +1,6 @@
 ---
 name: k-execute
-description: Etapa final do fluxo de trabalho. Executa UMA tarefa pendente por invocacao, delegando para a skill tatica indicada no frontmatter, roda lint e testes do projeto, commita (via k-commit) e marca a tarefa como concluida. Achado fora do escopo vira stub via k-spec modo desvio, sem sair da tarefa. Na ultima tarefa roda a suite completa, marca o spec.md como fluxo concluido e pergunta se quer subir agora; se sim, delega ao k-commit o push, a revisao, o PR e o merge. Nunca roda git/gh diretamente. Use depois de /k-task.
+description: Etapa final do fluxo de trabalho. Executa UMA tarefa pendente por invocacao, delegando para a skill tatica indicada no frontmatter, roda lint e testes do projeto, commita (via k-commit, que revisa o diff antes de cada commit) e marca a tarefa como concluida. Achado fora do escopo vira stub via k-spec modo desvio, sem sair da tarefa. Na ultima tarefa roda a suite completa, marca o spec.md como fluxo concluido e pergunta se quer subir agora; se sim, delega ao k-commit o push, o PR e o merge. Nunca roda git/gh diretamente. Use depois de /k-task.
 ---
 
 # k-execute
@@ -70,7 +70,7 @@ Consequencia esperada: o trabalho parcial (teste e implementacao incompletos) fi
 
 ### 5. Commitar
 
-Toda operacao de git e responsabilidade exclusiva da skill `k-commit` — o `k-execute` nunca roda `git`/`gh` diretamente. Chame `k-commit` no **modo 2b (commit)**: ela cuida da mensagem em Conventional Commits e das regras de branch, e para depois do commit — sem push, sem PR, sem merge. Push, revisao, PR e merge ficam com o Encerramento abaixo, depois da ultima tarefa, via `k-commit` no **modo 2c (ciclo de shipping)**.
+Toda operacao de git e responsabilidade exclusiva da skill `k-commit` — o `k-execute` nunca roda `git`/`gh` diretamente. Chame `k-commit` no **modo 2b (commit)**: ela roda a revisao automatizada antes de commitar, cuida da mensagem em Conventional Commits e das regras de branch, e para depois do commit — sem push, sem PR, sem merge. Push, PR e merge ficam com o Encerramento abaixo, depois da ultima tarefa, via `k-commit` no **modo 2c (ciclo de shipping)**.
 
 Adicione somente os arquivos da tarefa, mais o arquivo da propria tarefa e os `docker-compose` quando o bump se aplicar. Nunca `git add .`.
 
@@ -187,7 +187,7 @@ Spec: `<raiz-de-specs>/<ts>-<slug>/`
 <testes manuais, vindos do plan.md>
 ```
 
-6. **Chamar o `k-commit`** no **modo 2c (ciclo de shipping)**, passando: branch atual, alvo escolhido (passo 4) e o titulo/corpo montados (passo 5, template acima). O `k-commit` executa, nessa ordem: revisao automatizada -> push unico -> abertura do PR (imprimindo a URL) -> pergunta de merge, so se o alvo for uma branch protegida do projeto (ex.: `main`) -> limpeza da branch se aprovado. Sem `gh` disponivel, o `k-commit` monta o corpo com o conteudo recebido e instrui a abertura manual.
+6. **Chamar o `k-commit`** no **modo 2c (ciclo de shipping)**, passando: branch atual, alvo escolhido (passo 4) e o titulo/corpo montados (passo 5, template acima). O `k-commit` executa, nessa ordem: push unico -> abertura do PR (imprimindo a URL) -> pergunta de merge, so se o alvo for uma branch protegida do projeto (ex.: `main`) -> limpeza da branch se aprovado. A revisao automatizada ja aconteceu commit a commit no passo 5 de cada tarefa, entao o ciclo de shipping nao revisa de novo. Sem `gh` disponivel, o `k-commit` monta o corpo com o conteudo recebido e instrui a abertura manual.
 
 7. Se este fluxo gerou stubs de desvio, liste-os:
 
