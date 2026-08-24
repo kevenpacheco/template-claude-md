@@ -57,7 +57,7 @@ Aplica-se ao **uso isolado** e ao **modo 2c (ciclo de shipping)** chamado intern
 15. Push acontece **uma unica vez**, depois do ultimo commit pequeno da mudanca — nunca apos cada commit individual.
     - **Uso isolado:** como nao ha lista de tarefas que sinalize "acabou", **pergunte explicitamente** ao usuario ("sem mais mudancas pendentes, posso seguir pra push+PR?") antes de avancar. Nunca decida isso sozinho.
     - **Modo 2c:** essa pergunta ja foi feita pelo chamador antes de te chamar — pule direto pro push.
-16. Antes do push, rode a revisao automatizada (ver "Revisao automatizada antes do PR") sobre o diff acumulado da branch.
+16. A revisao automatizada ja aconteceu em cada commit individual (ver "Revisao automatizada antes do commit") — o ciclo de shipping nao repete a revisao antes do push.
 17. Apos o push, abra o PR e imprima a URL no chat.
     - **Uso isolado:** alvo e `main`; titulo/corpo vem do proprio commit/contexto da conversa.
     - **Modo 2c:** alvo e titulo/corpo sao os que o chamador forneceu — nao invente conteudo de negocio aqui.
@@ -139,10 +139,17 @@ EOF
 4. Decidir a branch de destino seguindo o fluxo de decisao de branch (ou usar o nome exato recebido do chamador, no modo 2a/2b)
 5. Se a branch de destino nao for bloqueada e for reutilizada: sincronizar com `origin/main` (ver "Sincronizar branch atual com `main`"). Se houver conflitos, perguntar ao usuario como resolver cada um antes de continuar
 6. Adicionar apenas os arquivos relevantes com `git add <arquivo>` (os informados pelo chamador, no modo 2b)
-7. Redigir mensagem seguindo o padrao (ou usar a mensagem sugerida pelo chamador, ajustando so o necessario pra bater com o padrao)
-8. Criar o commit
+7. Rodar a revisao automatizada sobre o que foi staged (ver "Revisao automatizada antes do commit")
+8. Redigir mensagem seguindo o padrao (ou usar a mensagem sugerida pelo chamador, ajustando so o necessario pra bater com o padrao)
+9. Criar o commit
 
 A partir daqui, o que acontece depende do modo (ver "Modos de uso"): parar (2a/2b), ou seguir para o ciclo de shipping (isolado ou 2c).
+
+### Revisao automatizada antes do commit
+
+Antes de criar cada commit (passo 7), revise `git diff --staged`: dispare subagentes de revisao de codigo, cada um cobrindo um eixo (aderencia aos padroes/convencoes do projeto; aderencia ao pedido original; simplificacao e reuso), e resuma os achados. Rode sempre, mesmo em commit so de documentacao (spec/plan/tasks) — nao decida sozinho que um diff e "trivial demais" pra revisar.
+
+E uma passada **informativa, nao bloqueante**: mostre os achados ao usuario junto com a mensagem de commit proposta, mas nao pare o fluxo por causa deles — quem decide se algo precisa ser corrigido antes do commit e o usuario.
 
 ## Fluxo de decisao de branch
 
